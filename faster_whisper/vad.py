@@ -144,6 +144,9 @@ def get_speech_timestamps(
         speeches.append(current_speech)
 
     for i, speech in enumerate(speeches):
+        print('enumerating the speech!')
+        print(f"Speech {i}: {speech}")
+
         # If it's the first speech segment, adjust the start of the segment.
         if i == 0:
             speech["start"] = int(max(0, speech["start"] - speech_pad_samples))
@@ -177,6 +180,9 @@ def get_speech_timestamps(
             speech["end"] = int(
                 min(audio_length_samples, speech["end"] + speech_pad_samples)
             )
+
+        print(
+            f"Adjusted Speech {i}: {speech['start']} - {speech['end']}")  # add this line to log the adjusted speech segments
 
     return speeches
 
