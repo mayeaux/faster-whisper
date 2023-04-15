@@ -144,16 +144,28 @@ def get_speech_timestamps(
         speeches.append(current_speech)
 
     for i, speech in enumerate(speeches):
+        # If it's the first speech segment, adjust the start of the segment.
         if i == 0:
             speech["start"] = int(max(0, speech["start"] - speech_pad_samples))
+
+        # If it's not the last speech segment, adjust the end of the current segment and the start of the next one.
         if i != len(speeches) - 1:
+            # Calculate the duration of silence between the current speech segment and the next one.
             silence_duration = speeches[i + 1]["start"] - speech["end"]
-            if silence_duration < 2 * speech_pad_samples:
+
+            # Define the minimum actual pause duration in samples.
+            min_actual_pause_duration_samples = 0.5 * sampling_rate  # Adjust this value as needed
+
+            # If the silence duration is less than both 2 * speech_pad_samples and min_actual_pause_duration_samples,
+            # adjust the end of the current speech segment and the start of the next speech segment.
+            if silence_duration < 2 * speech_pad_samples and silence_duration < min_actual_pause_duration_samples:
                 speech["end"] += int(silence_duration // 2)
                 speeches[i + 1]["start"] = int(
                     max(0, speeches[i + 1]["start"] - silence_duration // 2)
                 )
             else:
+                # If the silence duration is longer, only adjust the end of the current segment and the start of the next one
+                # by speech_pad_samples.
                 speech["end"] = int(
                     min(audio_length_samples, speech["end"] + speech_pad_samples)
                 )
@@ -161,6 +173,7 @@ def get_speech_timestamps(
                     max(0, speeches[i + 1]["start"] - speech_pad_samples)
                 )
         else:
+            # If it's the last speech segment, adjust the end of the segment.
             speech["end"] = int(
                 min(audio_length_samples, speech["end"] + speech_pad_samples)
             )
