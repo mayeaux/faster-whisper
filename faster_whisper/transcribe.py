@@ -330,12 +330,15 @@ class WhisperModel:
         content_frames = features.shape[-1] - self.feature_extractor.nb_max_frames
         seek = 0
         all_tokens = []
+        all_prompts_tokens = []
+        all_prompts_segments = []
         prompt_reset_since = 0
 
         if options.initial_prompt is not None:
             initial_prompt = " " + options.initial_prompt.strip()
             initial_prompt_tokens = tokenizer.encode(initial_prompt)
             all_tokens.extend(initial_prompt_tokens)
+            all_prompts_tokens.extend(initial_prompt_tokens)
 
         while seek < content_frames:
             time_offset = seek * self.feature_extractor.time_per_frame
@@ -350,7 +353,7 @@ class WhisperModel:
                     "Processing segment at %s", format_timestamp(time_offset)
                 )
 
-            previous_tokens = all_tokens[prompt_reset_since:]
+            previous_tokens = all_prompts_tokens[prompt_reset_since:]
             prompt = self.get_prompt(
                 tokenizer,
                 previous_tokens,
@@ -468,7 +471,7 @@ class WhisperModel:
                 seek += segment_size
 
             if not options.condition_on_previous_text or temperature > 0.5:
-                prompt_reset_since = len(all_tokens)
+                prompt_reset_since = len(all_prompts_tokens)
 
             if options.word_timestamps:
                 self.add_word_timestamps(
@@ -493,6 +496,22 @@ class WhisperModel:
                         seek = previous_seek + seek_shift
 
             encoder_output = None
+
+            segments_processed = 0
+
+            for i, segment in enumerate(current_segments, start=segments_processed):
+                print(segment)
+                print('enumerating segments')
+                text = tokenizer.decode(segment['tokens'])
+                if not text.strip():
+                    continue
+                check_prompt_num = 1
+                segment_text = tokenizer.decode(segment['tokens'])
+                if any([tokenizer.decode(prev['tokens']).strip() == segment_text.strip() for prev in
+                        all_prompts_segments[-check_prompt_num:]]):
+                    continue
+                all_prompts_tokens.extend(segment['tokens'])
+                all_prompts_segments.append({"id": i, **segment})
 
             for segment in current_segments:
                 tokens = segment["tokens"]
