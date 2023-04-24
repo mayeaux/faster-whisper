@@ -1,0 +1,16 @@
+av==10.*
+ctranslate2<4,>=3.10
+huggingface_hub>=0.13
+tokenizers==0.13.*
+
+[:python_version < "3.11"]
+onnxruntime==1.14.*
+
+[conversion]
+transformers[torch]>=4.23
+
+[dev]
+black==23.*
+flake8==6.*
+isort==5.*
+pytest==7.*

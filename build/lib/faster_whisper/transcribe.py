@@ -2,8 +2,6 @@ import itertools
 import logging
 import os
 import zlib
-import soundfile as sf
-
 
 from typing import BinaryIO, Iterable, List, NamedTuple, Optional, Tuple, Union
 
@@ -75,7 +73,6 @@ class WhisperModel:
         cpu_threads: int = 0,
         num_workers: int = 1,
         download_root: Optional[str] = None,
-        local_files_only: Optional[bool] = False,
     ):
         """Initializes the Whisper model.
 
@@ -99,17 +96,13 @@ class WhisperModel:
             This can improve the global throughput at the cost of increased memory usage.
           download_root: Directory where the model should be saved. If not set, the model
             is saved in the standard Hugging Face cache directory.
-          local_files_only:  If True, avoid downloading the file and return the path to the
-            local cached file if it exists.
         """
         self.logger = get_logger()
 
         if os.path.isdir(model_size_or_path):
             model_path = model_size_or_path
         else:
-            model_path = download_model(
-                model_size_or_path, download_root, local_files_only
-            )
+            model_path = download_model(model_size_or_path, download_root)
 
         self.model = ctranslate2.models.Whisper(
             model_path,
@@ -226,11 +219,6 @@ class WhisperModel:
         """
         sampling_rate = self.feature_extractor.sampling_rate
 
-        print('audio!')
-        print(audio)
-
-        newAudioPath = audio + 'vad.wav';
-
         if not isinstance(audio, np.ndarray):
             audio = decode_audio(audio, sampling_rate=sampling_rate)
 
@@ -244,9 +232,6 @@ class WhisperModel:
             vad_parameters = {} if vad_parameters is None else vad_parameters
             speech_chunks = get_speech_timestamps(audio, **vad_parameters)
             audio = collect_chunks(audio, speech_chunks)
-
-            # Save the processed audio to a file
-            sf.write(newAudioPath, audio, sampling_rate)
 
             self.logger.info(
                 "VAD filter removed %s of audio",
