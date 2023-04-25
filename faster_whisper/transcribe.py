@@ -21,6 +21,10 @@ from faster_whisper.vad import (
     get_speech_timestamps,
 )
 
+p = print
+
+logging.basicConfig(level=logging.DEBUG)
+
 
 class Word(NamedTuple):
     start: float
@@ -355,10 +359,48 @@ class WhisperModel:
         all_tokens = []
         prompt_reset_since = 0
 
+        initial_prompt = '.'
+        initial_prompt_tokens_fixed = tokenizer.encode(initial_prompt)
+
+        exclamationToken = tokenizer.encode('!')
+        questionToken = tokenizer.encode('?')
+        periodToken = tokenizer.encode('.')
+        commaToken = tokenizer.encode(',')
+
+
+
+
+
+
+        #
+        # initial_prompt = " " + options.initial_prompt.strip()
+        # print('initial prompt')
+        # print(initial_prompt)
+        #
+        # initial_prompt_tokens = tokenizer.encode(initial_prompt)
+        #
+        # print('initial prompt')
+        # print(initial_prompt_tokens)
+        #
+        # print('initial prompt token fixed')
+        # print(initial_prompt_tokens_fixed)
+        #
+        # print ('decoded 2411')
+        # text = tokenizer.decode([2411])
+        # print('text here')
+        # print(text)
+
+
+
+
         if options.initial_prompt is not None:
+            print('initial prompt')
+            print(options.initial_prompt)
             initial_prompt = " " + options.initial_prompt.strip()
             initial_prompt_tokens = tokenizer.encode(initial_prompt)
+            print('initial prompt tokens')
             all_tokens.extend(initial_prompt_tokens)
+            print(all_tokens)
 
         while seek < content_frames:
             time_offset = seek * self.feature_extractor.time_per_frame
@@ -374,12 +416,28 @@ class WhisperModel:
                 )
 
             previous_tokens = all_tokens[prompt_reset_since:]
+
+            print('previous tokens')
+            print(previous_tokens)
+
+            previous_tokens.extend(questionToken)
+            previous_tokens.extend(questionToken)
+            previous_tokens.extend(exclamationToken)
+            previous_tokens.extend(exclamationToken)
+            previous_tokens.extend(commaToken)
+            previous_tokens.extend(periodToken)
+
             prompt = self.get_prompt(
                 tokenizer,
                 previous_tokens,
                 without_timestamps=options.without_timestamps,
                 prefix=options.prefix if seek == 0 else None,
             )
+
+            # previous_tokens.extend(initial_prompt_tokens_fixed)
+
+            print('prompt here')
+            print(prompt)
 
             if encoder_output is None:
                 encoder_output = self.encode(segment)
@@ -390,6 +448,13 @@ class WhisperModel:
                 temperature,
                 compression_ratio,
             ) = self.generate_with_fallback(encoder_output, prompt, tokenizer, options)
+
+
+
+            p(result)
+            p(avg_logprob)
+            p(temperature)
+            p(compression_ratio)
 
             if options.no_speech_threshold is not None:
                 # no voice activity check
@@ -544,6 +609,12 @@ class WhisperModel:
                         else None
                     ),
                 )
+
+            print(all_tokens)
+            print('temperature')
+            print(temperature)
+            print('prompt_reset_since')
+            print(prompt_reset_since)
 
             if not options.condition_on_previous_text or temperature > 0.5:
                 prompt_reset_since = len(all_tokens)
