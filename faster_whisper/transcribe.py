@@ -399,7 +399,14 @@ class WhisperModel:
             initial_prompt = " " + options.initial_prompt.strip()
             initial_prompt_tokens = tokenizer.encode(initial_prompt)
             print('initial prompt tokens')
-            all_tokens.extend(initial_prompt_tokens)
+            # all_tokens.extend(initial_prompt_tokens)
+            all_tokens.extend(questionToken)
+            all_tokens.extend(questionToken)
+            all_tokens.extend(exclamationToken)
+            all_tokens.extend(exclamationToken)
+            all_tokens.extend(commaToken)
+            all_tokens.extend(periodToken)
+
             print(all_tokens)
 
         while seek < content_frames:
@@ -420,12 +427,12 @@ class WhisperModel:
             print('previous tokens')
             print(previous_tokens)
 
-            previous_tokens.extend(questionToken)
-            previous_tokens.extend(questionToken)
-            previous_tokens.extend(exclamationToken)
-            previous_tokens.extend(exclamationToken)
-            previous_tokens.extend(commaToken)
-            previous_tokens.extend(periodToken)
+            # previous_tokens.extend(questionToken)
+            # previous_tokens.extend(questionToken)
+            # previous_tokens.extend(exclamationToken)
+            # previous_tokens.extend(exclamationToken)
+            # previous_tokens.extend(commaToken)
+            # previous_tokens.extend(periodToken)
 
             prompt = self.get_prompt(
                 tokenizer,
