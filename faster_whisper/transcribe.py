@@ -401,8 +401,6 @@ class WhisperModel:
             print('initial prompt tokens')
             # all_tokens.extend(initial_prompt_tokens)
             all_tokens.extend(questionToken)
-            all_tokens.extend(questionToken)
-            all_tokens.extend(exclamationToken)
             all_tokens.extend(exclamationToken)
             all_tokens.extend(commaToken)
             all_tokens.extend(periodToken)
@@ -625,6 +623,10 @@ class WhisperModel:
 
             if not options.condition_on_previous_text or temperature > 0.5:
                 prompt_reset_since = len(all_tokens)
+                all_tokens.extend(questionToken)
+                all_tokens.extend(exclamationToken)
+                all_tokens.extend(commaToken)
+                all_tokens.extend(periodToken)
 
     def encode(self, features: np.ndarray) -> ctranslate2.StorageView:
         # When the model is running on multiple GPUs, the encoder output should be moved
