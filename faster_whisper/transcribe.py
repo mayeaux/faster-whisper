@@ -236,10 +236,10 @@ class WhisperModel:
         """
         sampling_rate = self.feature_extractor.sampling_rate
 
-        print('audio!')
-        print(audio)
+        # print('audio!')
+        # print(audio)
 
-        newAudioPath = audio + 'vad.wav';
+        newAudioPath = audio + 'vad.wav'
 
         if not isinstance(audio, np.ndarray):
             audio = decode_audio(audio, sampling_rate=sampling_rate)
@@ -367,11 +367,6 @@ class WhisperModel:
         periodToken = tokenizer.encode('.')
         commaToken = tokenizer.encode(',')
 
-
-
-
-
-
         #
         # initial_prompt = " " + options.initial_prompt.strip()
         # print('initial prompt')
@@ -394,18 +389,18 @@ class WhisperModel:
 
 
         if options.initial_prompt is not None:
-            print('initial prompt')
-            print(options.initial_prompt)
+            # print('initial prompt')
+            # print(options.initial_prompt)
             initial_prompt = " " + options.initial_prompt.strip()
             initial_prompt_tokens = tokenizer.encode(initial_prompt)
-            print('initial prompt tokens')
+            # print('initial prompt tokens')
             # all_tokens.extend(initial_prompt_tokens)
             all_tokens.extend(questionToken)
             all_tokens.extend(exclamationToken)
             all_tokens.extend(commaToken)
             all_tokens.extend(periodToken)
 
-            print(all_tokens)
+            # print(all_tokens)
 
         while seek < content_frames:
             time_offset = seek * self.feature_extractor.time_per_frame
@@ -422,8 +417,8 @@ class WhisperModel:
 
             previous_tokens = all_tokens[prompt_reset_since:]
 
-            print('previous tokens')
-            print(previous_tokens)
+            # print('previous tokens')
+            # print(previous_tokens)
 
             # previous_tokens.extend(questionToken)
             # previous_tokens.extend(questionToken)
@@ -441,8 +436,8 @@ class WhisperModel:
 
             # previous_tokens.extend(initial_prompt_tokens_fixed)
 
-            print('prompt here')
-            print(prompt)
+            # print('prompt here')
+            # print(prompt)
 
             if encoder_output is None:
                 encoder_output = self.encode(segment)
@@ -456,10 +451,10 @@ class WhisperModel:
 
 
 
-            p(result)
-            p(avg_logprob)
-            p(temperature)
-            p(compression_ratio)
+            # p(result)
+            # p(avg_logprob)
+            # p(temperature)
+            # p(compression_ratio)
 
             if options.no_speech_threshold is not None:
                 # no voice activity check
@@ -615,11 +610,11 @@ class WhisperModel:
                     ),
                 )
 
-            print(all_tokens)
-            print('temperature')
-            print(temperature)
-            print('prompt_reset_since')
-            print(prompt_reset_since)
+            # print(all_tokens)
+            # print('temperature')
+            # print(temperature)
+            # print('prompt_reset_since')
+            # print(prompt_reset_since)
 
             if not options.condition_on_previous_text or temperature > 0.5:
                 prompt_reset_since = len(all_tokens)
