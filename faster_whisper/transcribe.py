@@ -333,7 +333,10 @@ class WhisperModel:
             append_punctuations=append_punctuations,
         )
 
-        segments = self.generate_segments(features, tokenizer, options, encoder_output)
+        print('language here')
+        print(language)
+
+        segments = self.generate_segments(features, tokenizer, options, language, encoder_output)
 
         if speech_chunks:
             segments = restore_speech_timestamps(segments, speech_chunks, sampling_rate)
@@ -352,6 +355,7 @@ class WhisperModel:
         features: np.ndarray,
         tokenizer: Tokenizer,
         options: TranscriptionOptions,
+        language: str,
         encoder_output: Optional[ctranslate2.StorageView] = None,
     ) -> Iterable[Segment]:
         content_frames = features.shape[-1] - self.feature_extractor.nb_max_frames
@@ -360,46 +364,53 @@ class WhisperModel:
         all_tokens = []
         prompt_reset_since = 0
 
-        initial_prompt = '.'
-        initial_prompt_tokens_fixed = tokenizer.encode(initial_prompt)
+        print(options, flush=True)
+        print('language', flush=True)
+        print(language, flush=True)
+
+        questionToken = ["?"]
+        exclamationToken = ["!"]
+        commaToken = [","]
+        periodToken = ["."]
 
         exclamationToken = tokenizer.encode('!')
         questionToken = tokenizer.encode('?')
         periodToken = tokenizer.encode('.')
         commaToken = tokenizer.encode(',')
 
-        #
-        # initial_prompt = " " + options.initial_prompt.strip()
-        # print('initial prompt')
-        # print(initial_prompt)
-        #
-        # initial_prompt_tokens = tokenizer.encode(initial_prompt)
-        #
-        # print('initial prompt')
-        # print(initial_prompt_tokens)
-        #
-        # print('initial prompt token fixed')
-        # print(initial_prompt_tokens_fixed)
-        #
-        # print ('decoded 2411')
-        # text = tokenizer.decode([2411])
-        # print('text here')
-        # print(text)
+        character_languages = [
+            "ar",
+            "zh",
+            "ja",
+            "km",
+            "ko",
+            "lao",
+            "th",
+        ]
 
+        isACharacterLanguage = language in character_languages
+        print('is a character language!!!', flush=True)
+        print(isACharacterLanguage, flush=True)
 
-
-
-        if options.initial_prompt is not None:
-            # print('initial prompt')
-            # print(options.initial_prompt)
-            initial_prompt = " " + options.initial_prompt.strip()
-            initial_prompt_tokens = tokenizer.encode(initial_prompt)
-            # print('initial prompt tokens')
-            # all_tokens.extend(initial_prompt_tokens)
+        def extend_special_tokens(all_tokens):
             all_tokens.extend(questionToken)
             all_tokens.extend(exclamationToken)
             all_tokens.extend(commaToken)
             all_tokens.extend(periodToken)
+
+        if options.initial_prompt is not None:
+            if not isACharacterLanguage:
+                print('not a character language, extending', flush=True)
+
+                extend_special_tokens(all_tokens)
+            else:
+                print('is a character language, adding initial prompt', flush=True)
+
+                initial_prompt = " " + options.initial_prompt.strip()
+                initial_prompt_tokens = tokenizer.encode(initial_prompt)
+                all_tokens.extend(initial_prompt_tokens)
+
+                print(all_tokens)
 
             # print(all_tokens)
 
@@ -619,11 +630,9 @@ class WhisperModel:
 
             if not options.condition_on_previous_text or temperature > 0.5:
                 prompt_reset_since = len(all_tokens)
-                all_tokens.extend(questionToken)
-                all_tokens.extend(exclamationToken)
-                all_tokens.extend(commaToken)
-                all_tokens.extend(periodToken)
-
+                if not isACharacterLanguage:
+                    print('is not a character language, readding after reset', flush=True)
+                    extend_special_tokens(all_tokens)
     def encode(self, features: np.ndarray) -> ctranslate2.StorageView:
         # When the model is running on multiple GPUs, the encoder output should be moved
         # to the CPU since we don't know which GPU will handle the next job.
