@@ -250,8 +250,11 @@ class WhisperModel:
             "Processing audio with duration %s", format_timestamp(duration)
         )
 
+        print("VAD FILTER", flush=True)
+        print(vad_filter, flush=True)
+
         if vad_filter:
-            print('Starting vad process')
+            print('Starting vad process', flush=True)
             vad_parameters = {} if vad_parameters is None else vad_parameters
             speech_chunks = get_speech_timestamps(audio, **vad_parameters)
             audio = collect_chunks(audio, speech_chunks)
