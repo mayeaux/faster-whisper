@@ -407,6 +407,10 @@ class WhisperModel:
                 initial_prompt_tokens = tokenizer.encode(initial_prompt)
                 all_tokens.extend(initial_prompt_tokens)
 
+                print('starting tokens')
+                print(all_tokens)
+
+
             else:
                 print('is a character language, adding initial prompt', flush=True)
 
@@ -414,6 +418,7 @@ class WhisperModel:
                 initial_prompt_tokens = tokenizer.encode(initial_prompt)
                 all_tokens.extend(initial_prompt_tokens)
 
+                print('starting tokens')
                 print(all_tokens)
 
             # print(all_tokens)
