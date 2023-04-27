@@ -642,9 +642,9 @@ class WhisperModel:
 
             if not options.condition_on_previous_text or temperature > 0.5:
                 prompt_reset_since = len(all_tokens)
-                if not isACharacterLanguage:
-                    print('is not a character language, readding after reset', flush=True)
-                    extend_special_tokens(all_tokens)
+                # if not isACharacterLanguage:
+                #     print('is not a character language, readding after reset', flush=True)
+                #     extend_special_tokens(all_tokens)
     def encode(self, features: np.ndarray) -> ctranslate2.StorageView:
         # When the model is running on multiple GPUs, the encoder output should be moved
         # to the CPU since we don't know which GPU will handle the next job.
