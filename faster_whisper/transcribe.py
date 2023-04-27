@@ -407,8 +407,8 @@ class WhisperModel:
                 initial_prompt_tokens = tokenizer.encode(initial_prompt)
                 all_tokens.extend(initial_prompt_tokens)
 
-                print('starting tokens')
-                print(all_tokens)
+                print('starting tokens', flush=True)
+                print(all_tokens, flush=True)
 
 
             else:
@@ -418,8 +418,8 @@ class WhisperModel:
                 initial_prompt_tokens = tokenizer.encode(initial_prompt)
                 all_tokens.extend(initial_prompt_tokens)
 
-                print('starting tokens')
-                print(all_tokens)
+                print('starting tokens', flush=True)
+                print(all_tokens, flush=True)
 
             # print(all_tokens)
 
