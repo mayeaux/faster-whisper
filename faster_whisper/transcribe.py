@@ -85,7 +85,7 @@ class WhisperModel:
         cpu_threads: int = 0,
         num_workers: int = 1,
         download_root: Optional[str] = None,
-        local_files_only: Optional[bool] = False,
+        local_files_only: bool = False,
     ):
         """Initializes the Whisper model.
 
@@ -107,8 +107,8 @@ class WhisperModel:
             having multiple workers enables true parallelism when running the model
             (concurrent calls to self.model.generate() will run in parallel).
             This can improve the global throughput at the cost of increased memory usage.
-          download_root: Directory where the model should be saved. If not set, the model
-            is saved in the standard Hugging Face cache directory.
+          download_root: Directory where the models should be saved. If not set, the models
+            are saved in the standard Hugging Face cache directory.
           local_files_only:  If True, avoid downloading the file and return the path to the
             local cached file if it exists.
         """
@@ -118,7 +118,9 @@ class WhisperModel:
             model_path = model_size_or_path
         else:
             model_path = download_model(
-                model_size_or_path, download_root, local_files_only
+                model_size_or_path,
+                local_files_only=local_files_only,
+                cache_dir=download_root,
             )
 
         self.model = ctranslate2.models.Whisper(
