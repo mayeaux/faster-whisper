@@ -410,7 +410,7 @@ class WhisperModel:
             if not isACharacterLanguage:
                 print('not a character language, extending', flush=True)
 
-                # extend_special_tokens(all_tokens)
+                extend_special_tokens(all_tokens)
                 all_tokens.extend(initial_prompt_tokens)
 
                 print('starting tokens', flush=True)
