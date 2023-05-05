@@ -410,7 +410,7 @@ class WhisperModel:
             if not isACharacterLanguage:
                 print('not a character language, extending', flush=True)
 
-                extend_special_tokens(all_tokens)
+                # extend_special_tokens(all_tokens)
                 all_tokens.extend(initial_prompt_tokens)
 
                 print('starting tokens', flush=True)
@@ -642,7 +642,7 @@ class WhisperModel:
 
             if not options.condition_on_previous_text or temperature > 0.5:
                 prompt_reset_since = len(all_tokens)
-                if not isACharacterLanguage:
+                if not isACharacterLanguage and temperature > 1:
                     print('is not a character language, readding after reset', flush=True)
                     all_tokens.extend(initial_prompt_tokens)
 
