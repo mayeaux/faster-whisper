@@ -403,13 +403,14 @@ class WhisperModel:
             all_tokens.extend(commaToken)
             all_tokens.extend(periodToken)
 
+        initial_prompt = " " + options.initial_prompt.strip()
+        initial_prompt_tokens = tokenizer.encode(initial_prompt)
+
         if options.initial_prompt is not None:
             if not isACharacterLanguage:
                 print('not a character language, extending', flush=True)
 
-                extend_special_tokens(all_tokens)
-                initial_prompt = " " + options.initial_prompt.strip()
-                initial_prompt_tokens = tokenizer.encode(initial_prompt)
+                # extend_special_tokens(all_tokens)
                 all_tokens.extend(initial_prompt_tokens)
 
                 print('starting tokens', flush=True)
@@ -418,9 +419,6 @@ class WhisperModel:
 
             else:
                 print('is a character language, adding initial prompt', flush=True)
-
-                initial_prompt = " " + options.initial_prompt.strip()
-                initial_prompt_tokens = tokenizer.encode(initial_prompt)
                 all_tokens.extend(initial_prompt_tokens)
 
                 print('starting tokens', flush=True)
@@ -644,9 +642,10 @@ class WhisperModel:
 
             if not options.condition_on_previous_text or temperature > 0.5:
                 prompt_reset_since = len(all_tokens)
-                # if not isACharacterLanguage:
-                #     print('is not a character language, readding after reset', flush=True)
-                #     extend_special_tokens(all_tokens)
+                if not isACharacterLanguage:
+                    print('is not a character language, readding after reset', flush=True)
+                    all_tokens.extend(initial_prompt_tokens)
+
     def encode(self, features: np.ndarray) -> ctranslate2.StorageView:
         # When the model is running on multiple GPUs, the encoder output should be moved
         # to the CPU since we don't know which GPU will handle the next job.
