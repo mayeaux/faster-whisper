@@ -403,10 +403,10 @@ class WhisperModel:
             all_tokens.extend(commaToken)
             all_tokens.extend(periodToken)
 
-        initial_prompt = " " + options.initial_prompt.strip()
-        initial_prompt_tokens = tokenizer.encode(initial_prompt)
-
         if options.initial_prompt is not None:
+            initial_prompt = " " + options.initial_prompt.strip()
+            initial_prompt_tokens = tokenizer.encode(initial_prompt)
+
             if not isACharacterLanguage:
                 print('not a character language, extending', flush=True)
 
@@ -642,7 +642,11 @@ class WhisperModel:
 
             if not options.condition_on_previous_text or temperature > 0.5:
                 prompt_reset_since = len(all_tokens)
-                if not isACharacterLanguage and temperature > 1:
+                
+                if not isACharacterLanguage and temperature > 1 and options.initial_prompt is not None:
+                    initial_prompt = " " + options.initial_prompt.strip()
+                    initial_prompt_tokens = tokenizer.encode(initial_prompt)
+
                     print('is not a character language, readding after reset', flush=True)
                     all_tokens.extend(initial_prompt_tokens)
 
