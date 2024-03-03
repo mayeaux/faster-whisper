@@ -2,6 +2,7 @@ from faster_whisper import WhisperModel
 import time
 import json
 import sys
+from writers import get_writer
 
 start_model_load_time = time.time()
 
@@ -16,7 +17,9 @@ print("Start Time:", start_model_load_time)
 print("End Time:", finish_model_load_time)
 print("Elapsed Time (in seconds):", model_load_elapsed_time)
 
-segments, info = model.transcribe("english.mp4", word_timestamps=True)
+audioPath = "english.mp4"
+
+segments, info = model.transcribe(audioPath, word_timestamps=True)
 
 
 # language_name = LANGUAGES[info.language].title()
@@ -96,10 +99,19 @@ def get_colored_text(words):
 
 list_segments = []
 all_text = ""
+duration = info.duration
+print('duration')
+print(duration)
 for segment in segments:
     start, end, text = segment.start, segment.end, segment.text
+
+    print(start)
+    print(end)
+    print(text)
+
     all_text += text
 
+    # Print the segment
     if verbose or options.print_colors:
         if options.print_colors and segment.words:
             text = get_colored_text(segment.words)
@@ -115,54 +127,59 @@ for segment in segments:
 
     list_segments.append(segment_dict)
 
-# return dict(
-#     text=all_text,
-#     segments=list_segments,
-#     language=language_name,
-# )
+result = dict(
+    text=all_text,
+    segments=list_segments,
+    language=info.language,
+)
 
 print(all_text)
-print(segments)
+print(list(list_segments))
 # print(language)
 
-sys.exit()
+
+writer = get_writer('all', '.')
+writer(result, audioPath)
+
+
+
 
 
 
 
 # Record the start time
-start_time = time.time()
-
-segments = list(segments)
-
-# print(segments)
-end_time = time.time()
-
-elapsed_time = end_time - start_time
-
-# Print start, end, and elapsed time
-print("Start Time:", start_time)
-print("End Time:", end_time)
-print("Elapsed Time (in seconds):", elapsed_time)
-
-
-
-for segment in segments:
-    print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
-
-words_data = []
-for segment in segments:
-    for word in segment.words:
-        word_info = {
-            "start": word.start,
-            "end": word.end,
-            "word": word.word
-        }
-        words_data.append(word_info)
-
-
-# Convert to JSON
-words_json = json.dumps(words_data, indent=4)
+# start_time = time.time()
+#
+# segments = list(segments)
+#
+# # print(segments)
+# end_time = time.time()
+#
+# elapsed_time = end_time - start_time
+#
+# # Print start, end, and elapsed time
+# print("Start Time:", start_time)
+# print("End Time:", end_time)
+# print("Elapsed Time (in seconds):", elapsed_time)
+#
+#
+#
+# for segment in segments:
+#     print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
+#
+# words_data = []
+# for segment in segments:
+#     for word in segment.words:
+#         word_info = {
+#             "start": word.start,
+#             "end": word.end,
+#             "word": word.word
+#         }
+#         words_data.append(word_info)
+#
+#
+# # Convert to JSON
+# words_json = json.dumps(words_data, indent=4)
 
 
 
