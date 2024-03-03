@@ -19,7 +19,7 @@ print("Start Time:", start_model_load_time)
 print("End Time:", finish_model_load_time)
 print("Elapsed Time (in seconds):", model_load_elapsed_time)
 
-audioPath = "487794891020"
+audioPath = "679384053042"
 
 segments, info = model.transcribe(audioPath, word_timestamps=True)
 
@@ -105,6 +105,15 @@ duration = info.duration
 
 tracker = DurationProgressTracker(duration)
 
+uniqueNumber = audioPath
+processingJsonPath = os.path.expanduser(f'~/Development/whisper-frontend/api-transcriptions/{uniqueNumber}/processing_data.json')
+
+# read json
+with open(processingJsonPath) as f:
+    data = json.load(f)
+
+# get the
+
 print('duration')
 print(duration)
 for segment in segments:
@@ -113,6 +122,18 @@ for segment in segments:
 
     # Update the tracker with the duration of the current segment
     progress_info = tracker.update(segment.start, segment.end)
+
+    # Update the 'formattedProgress' section with the new data from your tracker
+    # This assumes you have a method in your tracker to get the formatted progress info as shown earlier
+    # If not, you would manually construct the dictionary based on the tracker's attributes
+    data['formattedProgress'] = progress_info
+    data['progress'] = progress_info['percentDoneAsNumber']
+    data['status'] = 'processing'
+
+    # Write the modified data back to the JSON file
+    with open(processingJsonPath, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4)
+
     # Print the progress info
     print(progress_info)
 
@@ -152,7 +173,10 @@ print(list(list_segments))
 # print(language)
 
 # output folder
-outputDirectory = '~/Development/whisper-frontend/api-transcriptions/487794891020'
+outputDirectory = processingJsonPath = os.path.expanduser(f'~/Development/whisper-frontend/api-transcriptions/{uniqueNumber}')
+
+
+# outputDirectory = '~/Development/whisper-frontend/api-transcriptions/487794891020'
 
 # expand it
 outputDirectory = os.path.expanduser(outputDirectory)

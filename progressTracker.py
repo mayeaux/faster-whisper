@@ -22,7 +22,7 @@ class DurationProgressTracker:
         time_remaining = max(0, estimated_total_time - elapsed_time)  # Prevent negative time remaining
 
         return {
-            "progressBar": self._get_progress_bar(percent_done),
+            "progressBar": "",
             "percentDone": f"{percent_done:.2f}%",
             "timeElapsed": self._format_time(elapsed_time),
             "speed": f"{elapsed_time / max(1, self.accumulated_duration):.2f}s",
