@@ -112,8 +112,7 @@ for segment in segments:
     segment_duration = segment.end - segment.start
 
     # Update the tracker with the duration of the current segment
-    progress_info = tracker.update(segment_duration)
-
+    progress_info = tracker.update(segment.start, segment.end)
     # Print the progress info
     print(progress_info)
 
