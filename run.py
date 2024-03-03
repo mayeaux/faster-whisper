@@ -19,9 +19,21 @@ print("Start Time:", start_model_load_time)
 print("End Time:", finish_model_load_time)
 print("Elapsed Time (in seconds):", model_load_elapsed_time)
 
-audioPath = "679384053042"
+# Retrieve the audio path from the command line arguments
+
+# Retrieve the audio path from the command line arguments
+
+try:
+    uniqueNumber = sys.argv[1]
+except IndexError:
+    uniqueNumber = "679384053042"
+
+audioPath = os.path.expanduser(f'~/Development/whisper-frontend/api-transcriptions/{uniqueNumber}/{uniqueNumber}')
 
 segments, info = model.transcribe(audioPath, word_timestamps=True)
+
+audioPath = uniqueNumber
+
 
 
 # language_name = LANGUAGES[info.language].title()
