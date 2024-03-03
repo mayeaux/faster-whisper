@@ -3,6 +3,8 @@ import time
 import json
 import sys
 from writers import get_writer
+from progressTracker import DurationProgressTracker
+
 
 start_model_load_time = time.time()
 
@@ -100,14 +102,27 @@ def get_colored_text(words):
 list_segments = []
 all_text = ""
 duration = info.duration
+
+tracker = DurationProgressTracker(duration)
+
 print('duration')
 print(duration)
 for segment in segments:
     start, end, text = segment.start, segment.end, segment.text
+    segment_duration = segment.end - segment.start
+
+    # Update the tracker with the duration of the current segment
+    progress_info = tracker.update(segment_duration)
+
+    # Print the progress info
+    print(progress_info)
 
     print(start)
     print(end)
     print(text)
+    # print segment duration like : Segment Duration: 0.00s
+    print(f"Segment Duration: {segment_duration:.2f}s")
+
 
     all_text += text
 
