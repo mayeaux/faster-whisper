@@ -4,7 +4,7 @@ import json
 import sys
 from writers import get_writer
 from progressTracker import DurationProgressTracker
-
+import os
 
 start_model_load_time = time.time()
 
@@ -19,7 +19,7 @@ print("Start Time:", start_model_load_time)
 print("End Time:", finish_model_load_time)
 print("Elapsed Time (in seconds):", model_load_elapsed_time)
 
-audioPath = "english.mp4"
+audioPath = "487794891020"
 
 segments, info = model.transcribe(audioPath, word_timestamps=True)
 
@@ -151,8 +151,14 @@ print(all_text)
 print(list(list_segments))
 # print(language)
 
+# output folder
+outputDirectory = '~/Development/whisper-frontend/api-transcriptions/487794891020'
 
-writer = get_writer('all', '.')
+# expand it
+outputDirectory = os.path.expanduser(outputDirectory)
+
+
+writer = get_writer('all', outputDirectory)
 writer(result, audioPath)
 
 
