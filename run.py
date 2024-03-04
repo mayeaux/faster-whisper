@@ -63,11 +63,9 @@ def transcribeBasedOnUniqueNumber(uniqueNumber: str) -> Any:
         condition_on_previous_text=False,  # Directly mapped, inverted the boolean value based on your initial parameter
         vad_filter=True,  # Directly mapped
         vad_parameters={
-            "vad_min_silence_duration_ms": 1500,
-            "vad_threshold": 0.35
-        },
-        # Set other parameters as needed. If some parameters are exactly the default values,
-        # you don't necessarily need to specify them again.
+            "threshold": 0.35,  # Adjusted based on your initial "vad_threshold" value
+            "min_silence_duration_ms": 1500,
+        }
     )
 
     language_name = LANGUAGES[info.language].title()
