@@ -53,3 +53,17 @@ if system_encoding != "utf-8":
 
     def make_safe(string):
         return string.encode(system_encoding, errors="replace").decode(system_encoding)
+
+class Options:
+    def __init__(self, print_colors=False, beam_size=5, best_of=5, patience=1):
+        self.print_colors = print_colors
+        self.beam_size = beam_size
+        self.best_of = best_of
+        self.patience = patience
+        # Add more attributes as needed
+
+# Create an options object with default settings
+options = Options()
+
+# Now you can set attributes
+options.print_colors = False
