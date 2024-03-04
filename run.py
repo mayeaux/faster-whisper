@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 start_model_load_time = time.time()
 
-model = WhisperModel("tiny", device="cpu", compute_type="float32")
+model = WhisperModel("large-v2", device="cpu", compute_type="float32")
 
 finish_model_load_time = time.time()
 
