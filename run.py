@@ -56,7 +56,19 @@ def transcribe_audio():
 def transcribeBasedOnUniqueNumber(uniqueNumber: str) -> Any:
     audioPath = os.path.expanduser(f'~/generate-subtitles-server/api-transcriptions/{uniqueNumber}/{uniqueNumber}')
 
-    segments, info = model.transcribe(audioPath, word_timestamps=True)
+    segments, info = model.transcribe(
+        audio=audioPath,
+        word_timestamps=True,  # Directly mapped
+        beam_size=5,  # Directly mapped
+        condition_on_previous_text=False,  # Directly mapped, inverted the boolean value based on your initial parameter
+        vad_filter=True,  # Directly mapped
+        vad_parameters={
+            "vad_min_silence_duration_ms": 1500,
+            "vad_threshold": 0.35
+        },
+        # Set other parameters as needed. If some parameters are exactly the default values,
+        # you don't necessarily need to specify them again.
+    )
 
     language_name = LANGUAGES[info.language].title()
 
