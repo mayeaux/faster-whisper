@@ -37,6 +37,9 @@ segments, info = model.transcribe(audioPath, word_timestamps=True)
 
 language_name = LANGUAGES[info.language].title()
 
+# print language name like Language Name: English
+print(f"Language Name: {language_name}")
+
 
 audioPath = uniqueNumber
 
@@ -83,6 +86,8 @@ with open(processingJsonPath) as f:
 print('duration')
 print(duration)
 data['status'] = 'processing'
+data['language'] = language_name
+data['languageCode'] = info.language
 
 # Write the modified data back to the JSON file
 with open(processingJsonPath, 'w', encoding='utf-8') as f:
