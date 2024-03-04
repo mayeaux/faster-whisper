@@ -8,6 +8,9 @@ import os
 from languages import LANGUAGES
 from utils import *
 from flask import Flask, request, jsonify
+from threading import Thread
+from typing import Any
+
 
 app = Flask(__name__)
 
@@ -37,9 +40,20 @@ def transcribe_audio():
     # Get the route from the request
     # route = request.json.get('route')
 
+    # Log: backend just got hit with uniqueNumber: 635294790577
+    print(f'backend just got hit with uniqueNumber: {data.get("uniqueNumber", "635294790577")}')
+
     # Extract the uniqueNumber from the JSON
     uniqueNumber = data.get('uniqueNumber', "635294790577")
 
+    thread = Thread(target=transcribeBasedOnUniqueNumber, args=(uniqueNumber,))
+    thread.start()
+    # transcribeBasedOnUniqueNumber(uniqueNumber)
+
+    return jsonify({'status': 'processing'}), 200
+
+
+def transcribeBasedOnUniqueNumber(uniqueNumber: str) -> Any:
     audioPath = os.path.expanduser(f'~/Development/whisper-frontend/api-transcriptions/{uniqueNumber}/{uniqueNumber}')
 
     segments, info = model.transcribe(audioPath, word_timestamps=True)
@@ -48,7 +62,6 @@ def transcribe_audio():
 
     # print language name like Language Name: English
     print(f"Language Name: {language_name}")
-
 
     audioPath = uniqueNumber
 
@@ -67,7 +80,8 @@ def transcribe_audio():
     tracker = DurationProgressTracker(duration)
 
     uniqueNumber = audioPath
-    processingJsonPath = os.path.expanduser(f'~/Development/whisper-frontend/api-transcriptions/{uniqueNumber}/processing_data.json')
+    processingJsonPath = os.path.expanduser(
+        f'~/Development/whisper-frontend/api-transcriptions/{uniqueNumber}/processing_data.json')
 
     # read json
     with open(processingJsonPath) as f:
@@ -81,9 +95,19 @@ def transcribe_audio():
     data['language'] = language_name
     data['languageCode'] = info.language
 
+    # setup formattedProgress
+    data['formattedProgress'] = {
+        "percentDoneAsNumber": 0,
+        "timeElapsed": "0s",
+        "timeRemaining": "?",
+        "speed": "?",
+    }
+
     # Write the modified data back to the JSON file
     with open(processingJsonPath, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=4)
+
+    # return sys.exit(0)
 
     for segment in segments:
         start, end, text = segment.start, segment.end, segment.text
@@ -131,12 +155,10 @@ def transcribe_audio():
     # output folder
     outputDirectory = os.path.expanduser(f'~/Development/whisper-frontend/api-transcriptions/{uniqueNumber}')
 
-
     # outputDirectory = '~/Development/whisper-frontend/api-transcriptions/487794891020'
 
     # expand it
     outputDirectory = os.path.expanduser(outputDirectory)
-
 
     writer = get_writer('all', outputDirectory)
     writer(result, audioPath)
@@ -147,10 +169,6 @@ def transcribe_audio():
     # Write the modified data back to the JSON file
     with open(processingJsonPath, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=4)
-
-    # send the response
-    return jsonify({'status': 'processing'}), 200
-
 
 if __name__ == '__main__':
     app.run(port=5000)

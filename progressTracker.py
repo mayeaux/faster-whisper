@@ -25,7 +25,7 @@ class DurationProgressTracker:
             "progressBar": "",
             "percentDone": f"{percent_done:.2f}%",
             "timeElapsed": self._format_time(elapsed_time),
-            "speed": f"{elapsed_time / max(1, self.accumulated_duration):.2f}s",
+            "speed": f"{self.accumulated_duration / max(1, elapsed_time):.2f}s",
             "percentDoneAsNumber": round(percent_done),
             "secondsCompleted": self.accumulated_duration,
             "secondsTotal": self.total_duration,
