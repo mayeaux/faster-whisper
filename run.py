@@ -54,7 +54,7 @@ def transcribe_audio():
 
 
 def transcribeBasedOnUniqueNumber(uniqueNumber: str) -> Any:
-    audioPath = os.path.expanduser(f'~/Development/whisper-frontend/api-transcriptions/{uniqueNumber}/{uniqueNumber}')
+    audioPath = os.path.expanduser(f'~/generate-subtitles-server/api-transcriptions/{uniqueNumber}/{uniqueNumber}')
 
     segments, info = model.transcribe(audioPath, word_timestamps=True)
 
@@ -81,7 +81,7 @@ def transcribeBasedOnUniqueNumber(uniqueNumber: str) -> Any:
 
     uniqueNumber = audioPath
     processingJsonPath = os.path.expanduser(
-        f'~/Development/whisper-frontend/api-transcriptions/{uniqueNumber}/processing_data.json')
+        f'~/generate-subtitles-server/api-transcriptions/{uniqueNumber}/processing_data.json')
 
     # read json
     with open(processingJsonPath) as f:
@@ -153,7 +153,7 @@ def transcribeBasedOnUniqueNumber(uniqueNumber: str) -> Any:
     # print(language)
 
     # output folder
-    outputDirectory = os.path.expanduser(f'~/Development/whisper-frontend/api-transcriptions/{uniqueNumber}')
+    outputDirectory = os.path.expanduser(f'~/generate-subtitles-server/api-transcriptions/{uniqueNumber}')
 
     # outputDirectory = '~/Development/whisper-frontend/api-transcriptions/487794891020'
 
